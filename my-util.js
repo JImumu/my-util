@@ -205,3 +205,70 @@ const renderText = text => {
 }
 //提取html中非标签元素
 const delHtmlTag = str => str.replace(/<[^>]+>/g,"");
+
+//是否微信
+const isWeiXin = () => window.navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == 'micromessenger'
+
+//处理表情输入
+const filteremoji = emojireg => {
+    var ranges = [
+        '\ud83c[\udf00-\udfff]', 
+        '\ud83d[\udc00-\ude4f]', 
+        '\ud83d[\ude80-\udeff]'
+    ];
+    emojireg = emojireg.replace(new RegExp(ranges.join('|'), 'g'), '[emoji]');
+    return emojireg
+};
+
+//百分比转换成数字
+const percent2num = percent => {
+	if(percent.indexOf('%')<0){
+		console.error("percent2num参数不是百分比字符串")
+	}
+	return parseFloat(percent.replace('%'))/100
+};
+
+//获取查询字符串
+const getQuery = name => {
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r!=null) return unescape(r[2]); return null;
+}
+
+//获取cookie
+const getCookie = name > {
+	var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+	if(arr=document.cookie.match(reg)){
+		return unescape(decodeURI(arr[2]));
+	}else{
+		return null;
+	}	
+}
+
+//获取cookie并转换成对象
+const getJsonCookie = name => {
+	var value = getCookie(name);
+	if(value != null){
+		return eval('(' + value + ')');
+	}else{
+		return null;
+	}
+}
+
+//添加cookie
+const SetCookie = (name, value, expires, path, domain, secure) => {
+ var today = new Date();
+ today.setTime(today.getTime());
+ if(expires) { expires *= 86400000; }
+ var expires_date = new Date(today.getTime() + (expires));
+ document.cookie = name + "=" + escape(value)
+  + (expires ? ";expires=" + expires_date.toGMTString() : "")
+  + (path ? ";path=" + path : "")
+  + (domain ? ";domain=" + domain : "")
+  + (secure ? ";secure" : "");
+}
+
+//删除cookie
+const removeCookie = name => {
+	SetCookie(name,"",-1)
+}
