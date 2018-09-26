@@ -272,3 +272,28 @@ const SetCookie = (name, value, expires, path, domain, secure) => {
 const removeCookie = name => {
 	SetCookie(name,"",-1)
 }
+
+//检查版本（前者是否大于等于后者）
+const checkVersion = (a, b) => {
+  a = a.split('.')
+  b = b.split('.')
+  let checkArr =[]
+  for (let i = 0; i < a.length; i++) {
+    let x
+    if (+a[i] > +b[i]) {
+      x = 1
+    } else if (+a[i] === +b[i]) {
+      x = 2
+    } else if (+a[i] < +b[i]) {
+      x = 3
+    }
+    checkArr.push(x)
+  }
+  for (let j = 0; j < checkArr.length; j++) {
+    if (checkArr[j] === 1) {
+      return true
+    } else if (checkArr[j] === 3) {
+      return false
+    }
+  }
+}
