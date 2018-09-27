@@ -297,3 +297,31 @@ const checkVersion = (a, b) => {
     }
   }
 }
+
+//把对象里含单引号的字符转转换成双引号
+const changeSingleQuote = obj => {
+  for (let n in obj) {
+    if ('string' === typeof obj[n])
+      obj[n] = obj[n].replace(/'/g, '"')
+  }
+  return obj
+}
+
+//数字缺位补0
+const prefixNum = (num, length) => {
+  num = '' + num
+  if (length < num.length) {
+    return num
+  }
+  let arr =[]
+  for (let i = 0; i < length; i++) {
+    arr.push('0')
+  }
+  if (typeof +num !== 'number') {
+    return '参数num错误'
+  } else {
+    arr = arr.slice(0, length - num.length)
+    arr.push(num)
+    return arr.join('')
+  }
+}
