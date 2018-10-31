@@ -334,7 +334,7 @@ const riqibuquan = weeksArr => {
     var days = (+new Date(end.getFullYear(), end.getMonth()+1) - base) / oneDay
     var date = [];
 
-    for (var i = 1; i < days; i++) {
+    for (var i = 1; i <= days; i++) {
         var now = new Date(base);
         base += oneDay
         date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
