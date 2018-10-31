@@ -326,7 +326,7 @@ const prefixNum = (num, length) => {
   }
 }
 
-riqibuquan = weeksArr => {
+const riqibuquan = weeksArr => {
     var start = new Date(weeksArr[0])
     var base = +new Date(start.getFullYear(), start.getMonth());
     var end = new Date(weeksArr[weeksArr.length-1])
