@@ -232,7 +232,7 @@ const percent2num = percent => {
 const getQuery = name => {
     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
     var r = window.location.search.substr(1).match(reg);
-    if (r!=null) return unescape(r[2]); return null;
+    if (r!=null) return decodeURIComponent(r[2]); return null;
 }
 
 //获取cookie
