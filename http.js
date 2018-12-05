@@ -100,7 +100,7 @@ jc.js.util.net.XMLHttpRequestObj = function(){
                 }  
             }  
             
-            if(data)
+            if(data && method=="GET")
                 url = url + "?" +JSON.stringify(data);
            
             this.xmlhttp.open(method,url,true);  
