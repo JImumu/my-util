@@ -342,7 +342,7 @@ const riqibuquan = weeksArr => {
     return date
 }
 
-const sortByCharCode = (arr, keyName) => {
+const sortByASIC = (arr, keyName) => {
   let maxlen = 0
   arr.forEach(e => {
     e = keyName ? e[keyName] : e
