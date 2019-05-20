@@ -342,22 +342,6 @@ const riqibuquan = weeksArr => {
     return date
 }
 
-const sortByASIC = (arr, keyName) => {
-  let maxlen = 0
-  arr.forEach(e => {
-    e = keyName ? e[keyName] : e
-    maxlen = ('' + e).length > maxlen ? ('' + e).length : maxlen
-  })
-  for (let i = maxlen; i > 0; i--) {
-    arr.sort((a, b) => {
-      a = keyName ? a[keyName] : a
-      b = keyName ? b[keyName] : b
-      let left = ('' + a).charCodeAt(i - 1) || 0
-      let right = ('' + b).charCodeAt(i - 1) || 0
-      return left - right
-    })
-  }
-  return arr
-}
+const sortByASIC = (arr, keyName) => arr.sort((a, b) => keyName ? (a[keyName] < b[keyName] ? -1 : 1) : (a < b ? -1 : 1))
 
 
