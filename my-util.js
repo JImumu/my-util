@@ -347,7 +347,9 @@ const sortByASIC = (arr, keyName) => arr.sort((a, b) => keyName ? (a[keyName] < 
 const num2Str = num => { // 将数字转换成科学技术字符串
   num = '' + num
   var numArr = num.split('.')
-  var zhenshu = numArr[0].split('').reverse().reduce((a,b,c) => {if((c+1)%3===0){return a + b + ','}else{return a + b}}, '')
+  var zhenshu = numArr[0].split('').reverse().reduce((a,b,c) => {
+	return (c+1)%3 === 0 ? a + b + ',' : a + b
+  }, '')
   zhenshu = zhenshu.split('').reverse().join('')
   if (numArr.length > 1) {
 	return zhenshu + '.' + numArr[1]
