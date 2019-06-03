@@ -344,4 +344,13 @@ const riqibuquan = weeksArr => {
 
 const sortByASIC = (arr, keyName) => arr.sort((a, b) => keyName ? (a[keyName] < b[keyName] ? -1 : 1) : (a < b ? -1 : 1))
 
+const num2Str = num => { // 将数字转换成科学技术字符串
+  num = '' + num
+  var numArr = num.split('.')
+  var zhenshu = numArr[0].split('').reverse().reduce((a,b,c) => {if((c+1)%3===0){return a + b + ','}else{return a + b}}, '')
+  zhenshu = zhenshu.split('').reverse().join('')
+  if (numArr.length > 1) {
+	return zhenshu + '.' + numArr[1]
+  } else {return zhenshu}
+ }
 
