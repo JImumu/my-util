@@ -356,3 +356,16 @@ const num2Str = num => { // 将数字转换成科学技术字符串
   } else {return zhenshu}
  }
 
+const fomatNum2Money = num => {
+  num = (+num || 0) + ''
+  if (num.indexOf('.') >= 0) {
+    if (num.split('.')[1].length > 2) {
+      num = num.replace(/([0-9]+\.[0-9]{2})[0-9]*/, '$1')
+    } else {
+      num = (+num).toFixed(2)
+    }
+  } else {
+    num = (+num).toFixed(2)
+  }
+  return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
