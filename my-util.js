@@ -369,3 +369,12 @@ const fomatNum2Money = num => {
   }
   return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
+
+const bigNumberToStr = obj => {
+  for (let p in obj) {
+    typeof obj[p] === 'object' && BigNumberToStr(obj[p])
+    if (obj[p] && obj[p].constructor && obj[p].constructor.name === 'BigNumber') {
+      obj[p] = obj[p].c.join('')
+    }
+  }
+}
