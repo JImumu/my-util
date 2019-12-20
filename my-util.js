@@ -370,11 +370,11 @@ const fomatNum2Money = num => {
   return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
-const bigNumberToStr = obj => {
-  for (let p in obj) {
-    typeof obj[p] === 'object' && BigNumberToStr(obj[p])
-    if (obj[p] && obj[p].constructor && obj[p].constructor.name === 'BigNumber') {
-      obj[p] = obj[p].c.join('')
-    }
-  }
+const replaceOverflow = end => strForReplace => {
+  strForReplace = strForReplace.replace(':', '')
+  strForReplace = strForReplace.replace(end, '')
+  let str = ('' + strForReplace).replace(/^0*/, '') || 0
+  /* eslint-disable */
+  strForReplace = String(Number(strForReplace)) == str ? strForReplace : `"${strForReplace}"`
+  return ':' + strForReplace + end
 }
