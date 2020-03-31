@@ -181,6 +181,18 @@ const queryArrayItem = (arr, key, value) => {
   }
   return {}
 };
+//删除数组里某一项
+const removeItemFromArr = (arr, value, key) => {
+  let index = 0
+  if (key) {
+    arr.forEach((e, i) => {
+      index = e[key] === value ? i : index
+    })
+  } else {
+    index = arr.indexOf(value)
+  }
+  return arr.slice(0, index).concat(arr.slice(index + 1))
+};
 //保留两位小数
 const tofixed2 = (num) => {
   if(!num){
@@ -377,4 +389,36 @@ const replaceOverflow = end => strForReplace => {
   /* eslint-disable */
   strForReplace = String(Number(strForReplace)) == str ? strForReplace : `"${strForReplace}"`
   return ':' + strForReplace + end
+}
+
+//jquery提示
+const toast = (msg, time) => {
+  const $ = window.$
+  let toast = $('<div></div>')
+  toast.addClass('fz28')
+  toast.text(msg)
+  toast.css({
+    'position': 'fixed',
+    'z-index': '999999',
+    'top': '50%',
+    'left': '50%',
+    'opacity': '0',
+    'transform': 'translateX(-50%) translateY(-50%)',
+    'transition': 'opacity .2s ease',
+    'background-color': 'rgba(0,0,0,.8)',
+    'color': '#fff',
+    'border-radius': '.13333rem',
+    'max-width': '80%',
+    'padding': '0.266667rem'
+  })
+  $('body').append(toast)
+  setTimeout(() => {
+    toast.css('opacity', 1)
+  })
+  setTimeout(() => {
+    toast.css('opacity', 0)
+    setTimeout(() => {
+      toast.remove()
+    }, 200)
+  }, time || 2000)
 }
