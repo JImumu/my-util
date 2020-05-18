@@ -432,6 +432,19 @@ const getArrayItem = (arr, key, value, getKey) => {
   return item ? (getKey ? item[getKey] : item) : ''
 }
 
+// 删除数组里某一项
+const removeItemFromArr = (arr, value, key) => {
+  let index = 0
+  if (key) {
+    arr.forEach((e, i) => {
+      index = e[key] === value ? i : index
+    })
+  } else {
+    index = arr.indexOf(value)
+  }
+  return arr.slice(0, index).concat(arr.slice(index + 1))
+}
+
 // 把数字转换成钱
 const fomatNum2Money = num => {
   num = +num || 0
@@ -440,3 +453,71 @@ const fomatNum2Money = num => {
   return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+// 时间转换成字符串
+const dateFormat = (date, fmt) => {
+  let str
+  try {
+    str = new Date(date)
+    let obj = {
+      'M+': str.getMonth() + 1,
+      'd+': str.getDate(),
+      'h+': str.getHours(),
+      'm+': str.getMinutes(),
+      's+': str.getSeconds(),
+      'q+': Math.floor((str.getMonth() + 3) / 3),
+      S: str.getMilliseconds()
+    }
+    if (/(y+)/.test(fmt)) {
+      fmt = fmt.replace(
+        RegExp.$1,
+        (str.getFullYear() + '').substr(4 - RegExp.$1.length)
+      )
+    }
+    for (let k in obj) {
+      if (new RegExp('(' + k + ')').test(fmt)) {
+        fmt = fmt.replace(
+          RegExp.$1,
+          RegExp.$1.length === 1
+            ? obj[k]
+            : ('00' + obj[k]).substr(('' + obj[k]).length)
+        )
+      }
+    }
+    return fmt
+  } catch (e) {
+    console.warining(e)
+    return ''
+  }
+}
+
+// jquery提示
+const toast = (msg, time) => {
+  const $ = window.$
+  let toast = $('<div></div>')
+  toast.addClass('fz28')
+  toast.text(msg)
+  toast.css({
+    'position': 'fixed',
+    'z-index': '999999',
+    'top': '50%',
+    'left': '50%',
+    'opacity': '0',
+    'transform': 'translateX(-50%) translateY(-50%)',
+    'transition': 'opacity .2s ease',
+    'background-color': 'rgba(0,0,0,.8)',
+    'color': '#fff',
+    'border-radius': '.13333rem',
+    'max-width': '80%',
+    'padding': '0.266667rem'
+  })
+  $('body').append(toast)
+  setTimeout(() => {
+    toast.css('opacity', 1)
+  })
+  setTimeout(() => {
+    toast.css('opacity', 0)
+    setTimeout(() => {
+      toast.remove()
+    }, 200)
+  }, time || 2000)
+}
