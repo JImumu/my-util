@@ -422,3 +422,21 @@ const toast = (msg, time) => {
     }, 200)
   }, time || 2000)
 }
+
+// 根据asic排序
+const sortByASIC = (arr, keyName) => arr.sort((a, b) => keyName ? (a[keyName] < b[keyName] ? -1 : 1) : (a < b ? -1 : 1))
+
+// 寻找数组里某一项
+const getArrayItem = (arr, key, value, getKey) => {
+  let item = arr.find(e => e[key] === value)
+  return item ? (getKey ? item[getKey] : item) : ''
+}
+
+// 把数字转换成钱
+const fomatNum2Money = num => {
+  num = +num || 0
+  num = num.toFixed(3)
+  num = num.replace(/([0-9]+\.[0-9]{2})[0-9]*/, '$1')
+  return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
