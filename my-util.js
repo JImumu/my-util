@@ -521,3 +521,15 @@ const toast = (msg, time) => {
     }, 200)
   }, time || 2000)
 }
+
+// 将xml转换成对象
+const parseXMLToObj = dom => {
+  const myParser = window.parser || new DOMParser()
+  dom = typeof dom === 'string' ? myParser.parseFromString(dom, 'text/xml') : dom
+  const obj = {}
+  const children = dom.children
+  for (let i = 0; i < children.length; i++) {
+    obj[children[i].nodeName] = children[i].children.length ? parseXMLToObj(children[i]) : children[i].textContent
+  }
+  return obj
+}
