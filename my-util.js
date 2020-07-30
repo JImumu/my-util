@@ -533,3 +533,35 @@ const parseXMLToObj = dom => {
   }
   return obj
 }
+
+// 从树状数据中查找节点及节点路径
+// obj={
+//     name: '1',
+//     children: [
+//         {name: '1-1', children: []},
+//         {name: '1-2', children: [
+//             {name: '1-2-1', children: []},
+//             {name: '1-2-2', children: [
+//                 {name: '1-2-2-1', children: [
+//                     {name: '1-2-2-1-1', children: []}
+//                 ]}
+//             ]}
+//         ]}
+//     ]
+// }
+// findTreeNodeAndPath('1-2-2-1', obj, 'name', 'children')
+findTreeNodeAndPath = (value, obj, key, childKey) => {
+    let arr = []
+    if (obj[key] === value) {
+        arr.unshift(obj)
+    } else {
+        for (let i = 0; i < obj[childKey].length; i++) {
+            arr = findTreeNodeAndPath(value, obj[childKey][i], key, childKey)
+            if (arr.length) {
+                arr.unshift(obj)
+                break
+            }
+        }
+    }
+    return arr
+}
