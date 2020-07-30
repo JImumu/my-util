@@ -1,0 +1,80 @@
+const setToggler = (el, binding) => {
+  el.style.maxHeight = 'unset'
+  const elStyle = getComputedStyle(el)
+  const height = parseFloat(elStyle.height) - parseFloat(elStyle.paddingTop) - parseFloat(elStyle.paddingBottom)
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize)
+  const toggleHeight = parseFloat(binding.value)
+  const isRem = binding.value.indexOf('rem') > 0
+
+  if (isRem) {
+    if (rootFontSize * toggleHeight >= height) {
+      el.hasToggler && removeChild(el, 'togger')
+      el.hasToggler = false
+      return
+    }
+  } else {
+    if (toggleHeight >= height) {
+      el.hasToggler && removeChild(el, 'togger')
+      el.hasToggler = false
+      return
+    }
+  }
+
+  if (el.hasToggler) {
+    if (!el.showAll) {
+      el.style.maxHeight = binding.value
+    }
+    return
+  }
+
+  el.hasToggler = true
+  el.style.maxHeight = binding.value
+  el.style.position = 'relative'
+  el.style.overflow = 'hidden'
+  el.showAll = false
+  const p = document.createElement('p')
+  p.className = 'togger'
+  p.style.height = '.8rem'
+  p.style.width = '100%'
+  p.style.height = '.8rem'
+  p.style.fontSize = '.32rem'
+  p.style.color = '#666'
+  p.style.position = 'absolute'
+  p.style.left = '0'
+  p.style.right = '0'
+  p.style.margin = 'auto'
+  p.style.bottom = '0'
+  p.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, .8), rgb(255, 255, 255))'
+  p.style.textAlign = 'center'
+  p.style.lineHeight = '3.5em'
+  p.style.cursor = 'pointer'
+  p.innerText = '查看更多 👇'
+  el.appendChild(p)
+
+  p.onclick = () => {
+    if (el.showAll) {
+      el.showAll = false
+      p.innerText = '查看更多 👇'
+      el.style.maxHeight = binding.value
+      el.style.paddingBottom = '0'
+    } else {
+      el.showAll = true
+      p.innerText = '收起 👆'
+      el.style.maxHeight = 'unset'
+      el.style.paddingBottom = '.8rem'
+    }
+  }
+}
+
+Vue.directive('toggle', {
+  inserted: (el, binding) => {
+    Vue.nextTick(() => {
+      setToggler(el, binding)
+    })
+  },
+  componentUpdated: (el, binding) => {
+    Vue.nextTick(() => {
+      setToggler(el, binding)
+    })
+  }
+})
