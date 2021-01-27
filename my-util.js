@@ -565,3 +565,26 @@ findTreeNodeAndPath = (value, obj, key, childKey) => {
     }
     return arr
 }
+
+// 隐藏微信公众号菜单
+const hideOptionMenu = () => {
+  window.WeixinJSBridge.call('hideOptionMenu')
+}
+
+const showOptionMenu = () => {
+  window.WeixinJSBridge.call('showOptionMenu')
+}
+
+const checkWeixinJSBridge = callBack => {
+  if (typeof window.WeixinJSBridge === 'undefined') {
+    if (document.addEventListener) {
+      document.addEventListener('WeixinJSBridgeReady', callBack, false)
+    } else if (document.attachEvent) {
+      document.attachEvent('WeixinJSBridgeReady', callBack)
+      document.attachEvent('onWeixinJSBridgeReady', callBack)
+    }
+  } else {
+    callBack()
+  }
+}
+
