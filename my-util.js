@@ -588,3 +588,30 @@ const checkWeixinJSBridge = callBack => {
   }
 }
 
+// 合并相同数据的单元格（相邻行）
+const getSpan = tableData => {
+    const fnInner = a => {
+        if (a.length) {
+            const firstItem = a[0]
+            const keys = Object.keys(firstItem).filter(e => !e.includes('Span'))
+            const keysEqual = keys.reduce((obj, item) => { obj[item] = true;return obj }, {})
+            keys.forEach(e => {
+                firstItem[e + 'Span'] = firstItem[e + 'Span'] || {colspan:1, rowspan:1}
+            })
+            for (let i = 1; i < a.length; i++) {
+                keys.forEach(e => {
+                    if (firstItem[e] === a[i][e] && firstItem[e + 'Span'].rowspan !== 0 && keysEqual[e]) {
+                        firstItem[e + 'Span'].rowspan++
+                        a[i][e + 'Span'] = {colspan:0, rowspan:0}
+                    } else {
+                        keysEqual[e] = false
+                    }
+                })
+            }
+            fnInner(a.slice(1))
+        }
+    }
+    const temp = JSON.parse(JSON.stringify(tableData))
+    fnInner(temp)
+    return temp
+}
