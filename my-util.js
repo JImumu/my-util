@@ -631,6 +631,7 @@ textHandle(ctx, textArr, numX, numY, textWidth, lineHeight = 32, maxLineNumber =
   let lastHeight = 0
   let lineNumber = 0
   textArr.forEach(e => {
+    console.log(lastWidth)
     if (lastWidth) {
       lineNumber--
     }
@@ -671,7 +672,7 @@ textHandle(ctx, textArr, numX, numY, textWidth, lineHeight = 32, maxLineNumber =
     if (temp) {
       row.push({
         str: temp,
-        x: numX,
+        x: textWidth - widthLimit + numX,
         y: row.length * lineHeight + (lastHeight || numY)
       })
       lastHeight = (row.length - 1) * lineHeight + (lastHeight || numY)
@@ -679,9 +680,11 @@ textHandle(ctx, textArr, numX, numY, textWidth, lineHeight = 32, maxLineNumber =
     }
     
     ctx.setFillStyle(e.color)
+    console.log(row)
   
     for (var b = 0; b < row.length; b++) {
       ctx.fillText(row[b].str, row[b].x, row[b].y)
     }
   })
+  return lastHeight
 }
