@@ -624,3 +624,64 @@ const numberCheck => value) => {
     .replace(/^\./, '0.') // 第四步：如果输入的第一位为小数点，则替换成 0. 实现自动补全
     .match(/^\d*(\.?\d{0,2})/g)[0] || '' // 第五步：最终匹配得到结果 以数字开头，只有一个小数点，而且小数点后面只能有0到2位小数
 }
+
+// canvas绘制多行，彩色文本
+textHandle(ctx, textArr, numX, numY, textWidth, lineHeight = 32, maxLineNumber = 0) {
+  let lastWidth = 0
+  let lastHeight = 0
+  let lineNumber = 0
+  textArr.forEach(e => {
+    if (lastWidth) {
+      lineNumber--
+    }
+    if (maxLineNumber && lineNumber >= maxLineNumber) {
+      return
+    }
+    const row = []
+    const str = e.str
+    let temp = ''
+    let widthLimit = lastWidth ? textWidth - lastWidth : textWidth
+    for (var a = 0; a < str.length; a++) {
+      if (maxLineNumber && lineNumber >= maxLineNumber) {
+        break
+      }
+      temp += str[a]
+      lastWidth = ctx.measureText(temp).width
+      if (lastWidth < widthLimit) {
+        // temp += str[a]
+      } else {
+        a--
+        if (maxLineNumber && lineNumber + 1 >= maxLineNumber) {
+          temp = temp.slice(0, temp.length - 2)
+          temp += '...'
+        } else {
+          temp = temp.slice(0, temp.length - 1)
+        }
+        
+        row.push({
+          str: temp,
+          x: textWidth - widthLimit + numX,
+          y: row.length * lineHeight + (lastHeight || numY)
+        })
+        widthLimit = textWidth
+        temp = ''
+        lineNumber++
+      }
+    }
+    if (temp) {
+      row.push({
+        str: temp,
+        x: numX,
+        y: row.length * lineHeight + (lastHeight || numY)
+      })
+      lastHeight = (row.length - 1) * lineHeight + (lastHeight || numY)
+      lineNumber++
+    }
+    
+    ctx.setFillStyle(e.color)
+  
+    for (var b = 0; b < row.length; b++) {
+      ctx.fillText(row[b].str, row[b].x, row[b].y)
+    }
+  })
+}
