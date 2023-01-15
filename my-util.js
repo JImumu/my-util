@@ -688,3 +688,33 @@ textHandle(ctx, textArr, numX, numY, textWidth, lineHeight = 32, maxLineNumber =
   })
   return lastHeight
 }
+
+// 利用MessageChannel深拷贝
+const deepClone = obj => new Promise(resolve => {
+    const messageChannel = new MessageChannel()
+    messageChannel.port2.onmessage = message => resolve(message.data)
+    messageChannel.port1.postMessage(obj)
+})
+
+// 利用WeakMap深拷贝
+const deepClone2 = (obj, hashMap = new WeakMap()) => {
+    if (obj === undefined || 'object' !== typeof obj) {
+        return obj
+    }
+    if (obj instanceof Date) {
+        return new Date(obj)
+    }
+    if (obj instanceof RegExp) {
+        return new RegExp(obj)
+    }
+    const result = hashMap.get(obj)
+    if (result) return result
+    const cloneTemp = new obj.constructor()
+    hashMap.set(obj, cloneTemp)
+    for (objKey in obj) {
+        if (obj.hasOwnProperty(objKey)) {
+            cloneTemp[objKey] = deepClone2(obj[objKey], hashMap)
+        }
+    }
+    return cloneTemp
+}
