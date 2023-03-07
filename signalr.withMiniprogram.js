@@ -1581,33 +1581,77 @@ var DefaultHttpClient = /** @class */ (function (_super) {
     DefaultHttpClient.prototype.send = function (request) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            wx.request({
-              url: request.url,
-              method: request.method,
-              header: request.headers,
-              responseType: request.responseType,
-              data: request.content,
-              timeout: request.timeout,
-              success: function (res) {
-                if (request.abortSignal) {
-                    request.abortSignal.onabort = null;
-                }
-                if (res.statusCode >= 200 && res.statusCode < 300) {
-                    let content = res.data
-                    if (typeof res.data === 'object') {
-                      content = JSON.stringify(res.data)
+            if (wx.request) {
+                wx.request({
+                  url: request.url,
+                  method: request.method,
+                  header: request.headers,
+                  responseType: request.responseType,
+                  data: request.content,
+                  timeout: request.timeout,
+                  success: function (res) {
+                    if (request.abortSignal) {
+                        request.abortSignal.onabort = null;
                     }
-                    resolve(new HttpResponse(res.statusCode, res.statusCode, content));
+                    if (res.statusCode >= 200 && res.statusCode < 300) {
+                        let content = res.data
+                        if (typeof res.data === 'object') {
+                          content = JSON.stringify(res.data)
+                        }
+                        resolve(new HttpResponse(res.statusCode, res.statusCode, content));
+                    }
+                    else {
+                        reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](res.statusCode, res.statusCode));
+                    }
+                  },
+                  fail: function (err) {
+                    _this.logger.log(_ILogger__WEBPACK_IMPORTED_MODULE_1__["LogLevel"].Warning, "Error from HTTP request. " + err.errno + ": " + err.errno);
+                    reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](err.errno, err.errno));
+                  }
+                })
+            } else {
+                var xhr = new XMLHttpRequest();
+                xhr.open(request.method, request.url, true);
+                xhr.withCredentials = true;
+                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                // Explicitly setting the Content-Type header for React Native on Android platform.
+                xhr.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+                if (request.headers) {
+                    Object.keys(request.headers)
+                        .forEach(function (header) { return xhr.setRequestHeader(header, request.headers[header]); });
                 }
-                else {
-                    reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](res.statusCode, res.statusCode));
+                if (request.responseType) {
+                    xhr.responseType = request.responseType;
                 }
-              },
-              fail: function (err) {
-                _this.logger.log(_ILogger__WEBPACK_IMPORTED_MODULE_1__["LogLevel"].Warning, "Error from HTTP request. " + err.errno + ": " + err.errno);
-                reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](err.errno, err.errno));
-              }
-            })
+                if (request.abortSignal) {
+                    request.abortSignal.onabort = function () {
+                        xhr.abort();
+                    };
+                }
+                if (request.timeout) {
+                    xhr.timeout = request.timeout;
+                }
+                xhr.onload = function () {
+                    if (request.abortSignal) {
+                        request.abortSignal.onabort = null;
+                    }
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(new HttpResponse(xhr.status, xhr.statusText, xhr.response || xhr.responseText));
+                    }
+                    else {
+                        reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](xhr.statusText, xhr.status));
+                    }
+                };
+                xhr.onerror = function () {
+                    _this.logger.log(_ILogger__WEBPACK_IMPORTED_MODULE_1__["LogLevel"].Warning, "Error from HTTP request. " + xhr.status + ": " + xhr.statusText);
+                    reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["HttpError"](xhr.statusText, xhr.status));
+                };
+                xhr.ontimeout = function () {
+                    _this.logger.log(_ILogger__WEBPACK_IMPORTED_MODULE_1__["LogLevel"].Warning, "Timeout from HTTP request.");
+                    reject(new _Errors__WEBPACK_IMPORTED_MODULE_0__["TimeoutError"]());
+                };
+                xhr.send(request.content || "");
+            }
         });
     };
     return DefaultHttpClient;
