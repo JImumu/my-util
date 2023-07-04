@@ -718,3 +718,27 @@ const deepClone2 = (obj, hashMap = new WeakMap()) => {
     }
     return cloneTemp
 }
+
+const limitPromise = (args, handler, limit) => {
+  let currentIndex = 0
+  let finishNum = 0
+  const max = args.length
+  const resArr = new Array(max)
+
+  async function runTask(resolve) {
+    const resItem = [null, null]
+    resArr[currentIndex] = resItem
+    await handler(args[currentIndex++]).then(res => {resItem[1]=res}).catch(err => {resItem[0]=err})
+    currentIndex < max && runTask(resolve)
+    finishNum++
+    finishNum === max && resolve(resArr)
+  }
+
+  return new Promise(resolve => {
+    for (let i = 0; i < limit && i < max; i++) {
+      runTask(resolve)
+    }
+  })
+}
+
+
