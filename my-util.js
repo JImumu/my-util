@@ -741,4 +741,22 @@ const limitPromise = (args, handler, limit) => {
   })
 }
 
+function createChrunkHook2(concurrency) {
+    let _callTimes = 0
+    const currentChrunk = {value:concurrency}
+    return function useChrunk() {
+        _callTimes++
+
+        function incrementer () {
+            currentChrunk.value++
+        }
+
+        return {
+            needChrunk: _callTimes,
+            currentChrunk,
+            incrementer,
+        }
+    }
+}
+
 
